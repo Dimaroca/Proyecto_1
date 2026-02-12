@@ -1,8 +1,8 @@
-package src.main.java.script; 
+package script; 
 import java.util.ArrayDeque;
 import java.util.Deque;
 
-public class StackMachine {
+public class StackManager {
     
     private Deque<byte[]> stack = new ArrayDeque();
 
