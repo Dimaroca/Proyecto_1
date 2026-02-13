@@ -20,7 +20,6 @@ public class Interpreter implements ScriptEngine {
     @Override
     public boolean execute(List<Instruction> script) {
 
-        // Reiniciar pila en cada ejecución
         stack = new ArrayStack<>();
 
         try {
@@ -46,7 +45,6 @@ public class Interpreter implements ScriptEngine {
 
     private void executeInstruction(Instruction instruction) {
 
-        // Si es dato, simplemente se empuja a la pila
         if (instruction.getType() == Instruction.Type.DATA) {
             stack.push(instruction.getData());
             return;
@@ -56,7 +54,6 @@ public class Interpreter implements ScriptEngine {
 
         switch (op) {
 
-            // Literales
             case OP_0:  stack.push(new byte[]{0});  break;
             case OP_1:  stack.push(new byte[]{1});  break;
             case OP_2:  stack.push(new byte[]{2});  break;
