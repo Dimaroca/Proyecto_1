@@ -1,9 +1,11 @@
 Intérprete de Bitcoin fase 1
 
 Integrantes: 
-Miguel Sajquín (252149)
-Rodrigo (25)
-Diego (25)
+
+Álvarez Lester (25196)
+Sajquín, Miguel (252149)
+Rodríguez Diego (25215)
+
 
 Este proyecto consiste en la implementación de un intérprete para un subconjunto de Bitcoin Script, desarrollado como parte del curso de Algoritmos y Estructuras de Datos.
 
