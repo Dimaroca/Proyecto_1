@@ -21,7 +21,7 @@ public enum Opcode {
     OP_16,    
 
     OP_DUP,
-    OP_DRUP,
+    OP_DROP,
 
     OP_EQUAL,
     OP_EQUALVERIFY,

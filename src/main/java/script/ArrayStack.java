@@ -1,45 +1,49 @@
 package script;
 
-public class ArrayStack<T> implements StackADT<T>{
+import java.util.ArrayDeque;
+import java.util.Deque;
 
-    private T[] data;
-    private int top; 
+public class ArrayStack<T> implements StackADT<T> {
+
+    private Deque<T> data;
 
     public ArrayStack() {
-        this(16);
-    }
-
-    public ArrayStack(int capacity) {
-        if (capacity <= 0) capacity = 16;
-        data = (T[]) new Object[capacity];
-        top = 0;
+        this.data = new ArrayDeque<>();
     }
 
     @Override
     public void push(T value) {
-        if (top == data.length) grow();
-        data[top++] = value;
+        data.push(value);  
     }
 
     @Override
-    public T peek(){
-        return (T) data[top--];
+    public T pop() {
+        if (isEmpty()) {
+            throw new RuntimeException("No se puede hacer pop de una pila vacía");
+        }
+        return data.pop();  
     }
 
     @Override
-    public T pop(){
-        T info = (T) data[top--];
-        data[top]=null;
-        return info;
+    public T peek() {
+        if (isEmpty()) {
+            throw new RuntimeException("No se puede hacer peek de una pila vacía");
+        }
+        return data.peek();
     }
 
+    @Override
+    public boolean isEmpty() {
+        return data.isEmpty();
+    }
+
+    @Override
     public int size() {
-        return top;
+        return data.size();
     }
 
-    private void grow() {
-        T[] bigger = (T[]) new Object[data.length * 2];
-        System.arraycopy(data, 0, bigger, 0, data.length);
-        data = bigger;
+    @Override
+    public String toString() {
+        return data.toString();
     }
 }
