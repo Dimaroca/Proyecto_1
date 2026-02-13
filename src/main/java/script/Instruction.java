@@ -5,7 +5,7 @@ public class Instruction{
     public enum Type {
         OPCODE,
         DATA
-    }
+    } 
 
     private final Type type;
     private final Opcode opCode;

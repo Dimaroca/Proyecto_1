@@ -20,6 +20,10 @@ public class ArrayStack<T> {
         data[top++] = value;
     }
 
+    public T peek(){
+        return (T) data[top--];
+    }
+
     public T pop(){
         T info = (T) data[top--];
         data[top]=null;
