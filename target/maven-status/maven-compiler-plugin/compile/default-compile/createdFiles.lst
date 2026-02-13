@@ -1,0 +1,13 @@
+script\txtManager.class
+script\ScriptEngine.class
+script\ScriptException.class
+script\Main.class
+script\Opcode.class
+script\Instruction$Type.class
+script\ArrayStack.class
+script\CryptoUtils.class
+script\Instruction.class
+script\Interpreter.class
+script\P2PKHScontrolador.class
+script\StackADT.class
+script\Interpreter$1.class
