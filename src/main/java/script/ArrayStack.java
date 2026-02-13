@@ -1,6 +1,6 @@
 package script;
 
-public class ArrayStack<T> {
+public class ArrayStack<T> implements StackADT<T>{
 
     private Object[] data;
     private int top; 
@@ -15,23 +15,22 @@ public class ArrayStack<T> {
         top = 0;
     }
 
+    @Override
     public void push(T value) {
         if (top == data.length) grow();
         data[top++] = value;
     }
 
+    @Override
     public T peek(){
         return (T) data[top--];
     }
 
+    @Override
     public T pop(){
         T info = (T) data[top--];
         data[top]=null;
         return info;
-    }
-
-    public boolean isEmpty() {
-        return top == 0;
     }
 
     public int size() {
