@@ -3,20 +3,53 @@ package script;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Implementación concreta de {@link ScriptEngine} que interpreta
+ * un subconjunto de instrucciones de Bitcoin Script.
+ *
+ * <p>Un script se considera válido si:</p>
+ * <ul>
+ *   <li>No ocurre ningún error durante su ejecución.</li>
+ *   <li>La pila no queda vacía al finalizar.</li>
+ *   <li>El elemento superior de la pila representa un valor verdadero.</li>
+ * </ul>
+ *
+ * <p>Complejidad temporal: O(n), donde n es el número de instrucciones
+ * del script.</p>
+ */
 public class Interpreter implements ScriptEngine {
 
     private StackADT<byte[]> stack;
     private boolean trace;
 
+    /**
+     * Construye un interpreter sin trace
+     */
     public Interpreter() {
         this(false);
     }
 
+    /**
+     * Construye un interpreter.
+     *
+     * @param trace si es true, imprime el estado de la pila
+     *              después de cada instrucción
+     */
     public Interpreter(boolean trace) {
         this.stack = new ArrayStack<>();
         this.trace = trace;
     }
 
+    /**
+     * Ejecuta un script compuesto por una lista de instrucciones.
+     *
+     * @param script lista ordenada de instrucciones a ejecutar
+     * @return true si el script es válido, false en caso contrario
+     *
+     * @pre script != null
+     * @post la pila se evalúa según las reglas de validación
+     * @complexity O(n)
+     */
     @Override
     public boolean execute(List<Instruction> script) {
 
@@ -42,7 +75,12 @@ public class Interpreter implements ScriptEngine {
             return false;
         }
     }
-
+    /**
+    * Ejecuta una instrucción individual del script.
+    *
+    * @param instruction instrucción a ejecutar
+    * @throws ScriptException si ocurre un error durante la ejecución
+    */
     private void executeInstruction(Instruction instruction) {
 
         if (instruction.getType() == Instruction.Type.DATA) {
@@ -100,7 +138,11 @@ public class Interpreter implements ScriptEngine {
                 throw new ScriptException("Opcode no soportado: " + op);
         }
     }
-
+    /**
+    * Duplica el elemento superior de la pila.
+    *
+    * @throws ScriptException si la pila está vacía
+    */
     private void executeDup() {
         if (stack.isEmpty()) {
             throw new ScriptException("Stack vacío en OP_DUP");
@@ -108,14 +150,26 @@ public class Interpreter implements ScriptEngine {
         byte[] top = stack.peek();
         stack.push(top);
     }
-
+    /**
+    * Elimina el elemento superior de la pila.
+    *
+    * @throws ScriptException si la pila está vacía
+    *
+    * @post el tamaño de la pila disminuye en uno
+    * @complexity O(1)
+    */
     private void executeDrop() {
         if (stack.isEmpty()) {
             throw new ScriptException("Stack vacío en OP_DROP");
         }
         stack.pop();
     }
-
+    /**
+    * Compara los dos elementos superiores de la pila.
+    * Empuja 1 si son iguales, 0 en caso contrario.
+    *
+    * @throws ScriptException si hay menos de dos elementos
+    */
     private void executeEqual() {
         if (stack.size() < 2) {
             throw new ScriptException("No hay suficientes elementos para OP_EQUAL");
@@ -127,7 +181,12 @@ public class Interpreter implements ScriptEngine {
         boolean equal = Arrays.equals(a, b);
         stack.push(booleanToBytes(equal));
     }
-
+    /**
+    * Verifica que los dos elementos superiores sean iguales.
+    * Si no lo son, detiene la ejecución lanzando una excepción.
+    *
+    * @throws ScriptException si la comparación falla
+    */
     private void executeEqualVerify() {
         executeEqual();
 
@@ -137,7 +196,11 @@ public class Interpreter implements ScriptEngine {
             throw new ScriptException("OP_EQUALVERIFY falló");
         }
     }
-
+    /**
+    * Aplica la función HASH160 al elemento superior de la pila.
+    *
+    * @throws ScriptException si la pila está vacía
+    */
     private void executeHash160() {
         if (stack.isEmpty()) {
             throw new ScriptException("Stack vacío en OP_HASH160");
@@ -147,7 +210,12 @@ public class Interpreter implements ScriptEngine {
         byte[] hash = CryptoUtils.hash160(data);
         stack.push(hash);
     }
-
+    /**
+    * Verifica la firma digital (simulada).
+    * Empuja 1 si es válida, 0 en caso contrario.
+    *
+    * @throws ScriptException si hay menos de dos elementos
+    */
     private void executeCheckSig() {
         if (stack.size() < 2) {
             throw new ScriptException("No hay suficientes elementos para OP_CHECKSIG");
@@ -159,14 +227,31 @@ public class Interpreter implements ScriptEngine {
         boolean valid = CryptoUtils.checkSig(signature, pubKey);
         stack.push(booleanToBytes(valid));
     }
-
+    /**
+    * Determina si un arreglo de bytes representa el valor falso.
+    *
+    * Un valor se considera falso si todos sus bytes son iguales a 0. 
+    * Cualquier otro valor se considera verdadero.</p>
+    *
+    * @param data arreglo de bytes a evaluar
+    * @return true si el valor representa 0, false en caso contrario
+    * @complexity O(n), donde n es el tamaño del arreglo
+    */
     private boolean isZero(byte[] data) {
         for (byte b : data) {
             if (b != 0) return false;
         }
         return true;
     }
-
+    /**
+    * Convierte un valor booleano en su representación binaria
+    * para almacenarlo en la pila.
+    *
+    *
+    * @param value valor boolean a convertir
+    * @return arreglo de bytes
+    * @complexity O(1)
+    */
     private byte[] booleanToBytes(boolean value) {
         return value ? new byte[]{1} : new byte[]{0};
     }
