@@ -1,11 +1,9 @@
 package script;
 
-import java.util.EmptyStackException;
-
 public class ArrayStack<T> {
 
     private Object[] data;
-    private int top; // cantidad de elementos (también índice del siguiente libre)
+    private int top; 
 
     public ArrayStack() {
         this(16);
@@ -22,18 +20,10 @@ public class ArrayStack<T> {
         data[top++] = value;
     }
 
-    @SuppressWarnings("unchecked")
-    public T pop() {
-        if (isEmpty()) throw new EmptyStackException();
-        T value = (T) data[--top];
-        data[top] = null; // evitar memory leak
-        return value;
-    }
-
-    @SuppressWarnings("unchecked")
-    public T peek() {
-        if (isEmpty()) throw new EmptyStackException();
-        return (T) data[top - 1];
+    public T pop(){
+        T info = (T) data[top--];
+        data[top]=null;
+        return info;
     }
 
     public boolean isEmpty() {
