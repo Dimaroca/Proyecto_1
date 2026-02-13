@@ -68,8 +68,6 @@ public class Interpreter {
             }
         }
 
-        if (stack.isEmpty()) return false;
-
         byte[] result = stack.pop();
         return !(result.length == 1 && result[0] == 0);
     }

@@ -2,16 +2,16 @@ package script;
 
 public class ArrayStack<T> implements StackADT<T>{
 
-    private Object[] data;
+    private T[] data;
     private int top; 
 
     public ArrayStack() {
         this(16);
     }
 
-    public ArrayStack(int initialCapacity) {
-        if (initialCapacity <= 0) initialCapacity = 16;
-        data = new Object[initialCapacity];
+    public ArrayStack(int capacity) {
+        if (capacity <= 0) capacity = 16;
+        data = (T[]) new Object[capacity];
         top = 0;
     }
 
@@ -38,7 +38,7 @@ public class ArrayStack<T> implements StackADT<T>{
     }
 
     private void grow() {
-        Object[] bigger = new Object[data.length * 2];
+        T[] bigger = (T[]) new Object[data.length * 2];
         System.arraycopy(data, 0, bigger, 0, data.length);
         data = bigger;
     }
