@@ -6,6 +6,8 @@ Integrantes:
 Sajquín, Miguel (252149)
 Rodríguez Diego (25215)
 
+Versión de java necesaria para este programa: 24.0.1
+Versiones anteriores a este generan errores de lógica sobre el ordenamiento de directorios
 
 Este proyecto consiste en la implementación de un intérprete para un subconjunto de Bitcoin Script, desarrollado como parte del curso de Algoritmos y Estructuras de Datos.
 
