@@ -46,3 +46,5 @@ public class Main {
 
     }
 }
+
+Para ejecutar el main o los test, se debe abrir la terminal desde la carpeta script correspondiente (sea main o test dependiendo del caso)
