@@ -52,6 +52,7 @@ public final class CryptoUtils {
      * @complexity O(n), donde n es el tamaño del arreglo comparado
      */
     public static boolean checkSig(byte[] signature, byte[] pubKey) {
-        return Arrays.equals(signature, pubKey);
+        byte[] expected = hash160(pubKey);
+        return Arrays.equals(signature, expected);
     }
 }
