@@ -10,7 +10,7 @@ public class Main {
         byte[][] inputs = reader.readSignatureAndPubKey("prueba.txt");//aqui es donde iria el archivo .txt
         
         byte[] pubKey = inputs[1];
-        byte[] firma = new byte[]{1,2,4};
+        byte[] firma = CryptoUtils.hash160(pubKey);
         
         List<Instruction> script = P2PKHScontrolador.build(firma, pubKey);
         

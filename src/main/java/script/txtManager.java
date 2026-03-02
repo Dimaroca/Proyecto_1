@@ -49,27 +49,10 @@ public class txtManager {
     }
 
     /**
-     * Convierte una línea con números separados por coma
-     * en un arreglo de bytes.
+     * Convierte el input en bytes, parecido a lo que hace Bitcoin
      *
-     * @param line línea a convertir
-     * @return arreglo de bytes correspondiente
-     * @throws IOException si el formato es inválido
      */
-    private byte[] parseLine(String line) throws IOException {
-
-        String[] parts = line.trim().split(",");
-
-        byte[] data = new byte[parts.length];
-
-        try {
-            for (int i = 0; i < parts.length; i++) {
-                data[i] = Byte.parseByte(parts[i].trim());
-            }
-        } catch (NumberFormatException e) {
-            throw new IOException("Formato inválido en el archivo: " + line);
-        }
-
-        return data;
+    private byte[] parseLine(String line) {
+        return line.trim().getBytes(java.nio.charset.StandardCharsets.UTF_8);
     }
 }

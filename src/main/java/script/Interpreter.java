@@ -148,7 +148,8 @@ public class Interpreter implements ScriptEngine {
             throw new ScriptException("Stack vacío en OP_DUP");
         }
         byte[] top = stack.peek();
-        stack.push(top);
+        byte[]copy = Arrays.copyOf(top, top.length);
+        stack.push(copy);
     }
     /**
     * Elimina el elemento superior de la pila.
