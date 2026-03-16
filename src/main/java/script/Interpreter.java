@@ -60,7 +60,7 @@ public class Interpreter implements ScriptEngine {
                 executeInstruction(instruction);
 
                 if (trace) {
-                    System.out.println("Stack: " + stack);
+                    System.out.println("Ejecutando: " + instruction.getOpCode() + " | Pila: " + pilaATexto());
                 }
             }
 
@@ -255,5 +255,39 @@ public class Interpreter implements ScriptEngine {
     */
     private byte[] booleanToBytes(boolean value) {
         return value ? new byte[]{1} : new byte[]{0};
+    }
+
+    private String pilaATexto() {
+        StringBuilder sb = new StringBuilder("[");
+        StackADT<byte[]> temp = new ArrayStack<>();
+        while (!stack.isEmpty()) {
+            byte[] valor = stack.pop();
+            temp.push(valor);
+            boolean printable = true;
+            for (byte b : valor) {
+                if (b < 32 || b > 126) {
+                    printable = false;
+                    break;
+                }
+            }
+            if (printable) {
+                sb.append(new String(valor, java.nio.charset.StandardCharsets.UTF_8));
+            } else {
+                StringBuilder hex = new StringBuilder();
+                for (byte b : valor) {
+                    hex.append(String.format("%02x", b));
+                }
+                sb.append(hex);
+            }
+            sb.append(", ");
+        }
+        while (!temp.isEmpty()) {
+            stack.push(temp.pop());
+        }
+        if (sb.length() > 1) {
+            sb.setLength(sb.length() - 2);
+        }
+        sb.append("]");
+        return sb.toString();
     }
 }
