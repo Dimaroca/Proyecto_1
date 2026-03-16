@@ -3,36 +3,23 @@ package script;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Clase encargada de leer archivos de texto
- * que contienen la firma y la clave pública.
+ * Clase encargada de leer archivos de texto utilizados
+ * por el intérprete de scripts.
  *
- * <p>Se espera que el archivo tenga el siguiente formato:</p>
- *
- * <pre>
- * 1,2,3
- * 1,2,3
- * </pre>
- *
- * Donde:
- * <ul>
- *   <li>Primera línea: firma</li>
- *   <li>Segunda línea: clave pública</li>
- * </ul>
+ * Puede leer:
+ * 1) Firma y clave pública, para P2PKH
+ * 2) Scripts completos, uno por línea
  */
 public class txtManager {
 
     /**
      * Lee un archivo de texto y retorna la firma y la clave pública
      * como arreglos de bytes.
-     *
-     * @param filePath ruta del archivo a leer
-     * @return arreglo bidimensional donde:
-     *         [0] = firma,
-     *         [1] = clave pública
-     * @throws IOException si el archivo no existe o el formato es inválido
      */
     public byte[][] readSignatureAndPubKey(String filePath) throws IOException {
 
@@ -49,10 +36,86 @@ public class txtManager {
     }
 
     /**
-     * Convierte el input en bytes, parecido a lo que hace Bitcoin
-     *
+     * Lee un archivo donde cada línea representa un script completo.
+     */
+    public List<String> readScripts(String filePath) throws IOException {
+
+        List<String> lines = Files.readAllLines(Path.of(filePath));
+        List<String> scripts = new ArrayList<>();
+
+        for (String line : lines) {
+
+            line = line.trim();
+
+            if (line.isEmpty()) {
+                continue;
+            }
+
+            if (line.startsWith("#")) {
+                continue;
+            }
+
+            scripts.add(line);
+        }
+
+        return scripts;
+    }
+
+    /**
+     * Convierte una línea en bytes
      */
     private byte[] parseLine(String line) {
-        return line.trim().getBytes(java.nio.charset.StandardCharsets.UTF_8);
+        return line.trim().getBytes(StandardCharsets.UTF_8);
+    }
+
+    /**
+     * Convierte una línea de texto en una lista de instrucciones
+     * que el intérprete puede ejecutar.
+     */
+    public List<Instruction> parseScript(String line) {
+
+        List<Instruction> script = new ArrayList<>();
+
+        // soporta espacios, comas o punto y coma como separadores
+        String[] tokens = line.trim().split("[,;\\s]+");
+
+        for (String token : tokens) {
+
+            token = token.trim();
+
+            if (token.isEmpty()) {
+                continue;
+            }
+
+            // intentar interpretar como opcode
+            try {
+                Opcode op = Opcode.valueOf(token.toUpperCase());
+                script.add(new Instruction(op));
+                continue;
+            } catch (IllegalArgumentException ignored) {}
+
+            // booleanos
+            if (token.equalsIgnoreCase("true")) {
+                script.add(new Instruction(new byte[]{1}));
+                continue;
+            }
+
+            if (token.equalsIgnoreCase("false")) {
+                script.add(new Instruction(new byte[]{0}));
+                continue;
+            }
+
+            // números
+            try {
+                int number = Integer.parseInt(token);
+                script.add(new Instruction(new byte[]{(byte) number}));
+                continue;
+            } catch (NumberFormatException ignored) {}
+
+            // si no es nada de lo anterior, se trata como DATA
+            script.add(new Instruction(token.getBytes(StandardCharsets.UTF_8)));
+        }
+
+        return script;
     }
 }

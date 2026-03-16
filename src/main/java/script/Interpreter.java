@@ -91,17 +91,21 @@ public class Interpreter implements ScriptEngine {
     * @throws ScriptException si ocurre un error durante la ejecución
     */
     private void executeInstruction(Instruction instruction) {
-
+        if (!seEstaEjecutando()) {
+            if (instruction.getType() == Instruction.Type.OPCODE) {
+                Opcode op = instruction.getOpCode();
+                if (op != Opcode.OP_IF && op != Opcode.OP_ELSE && op != Opcode.OP_ENDIF) {
+                    return;
+                }
+            } else {
+                return;
+            }
+        }
         if (instruction.getType() == Instruction.Type.DATA) {
             stack.push(instruction.getData());
             return;
         }
-        if (!seEstaEjecutando()) {
-            Opcode op = instruction.getOpCode();
-            if (op != Opcode.OP_IF && op != Opcode.OP_ELSE && op != Opcode.OP_ENDIF) {
-                return;
-            }
-        }
+    
         Opcode op = instruction.getOpCode();
 
         switch (op) {
