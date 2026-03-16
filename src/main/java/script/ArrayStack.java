@@ -16,7 +16,7 @@ import java.util.Deque;
 public class ArrayStack<T> implements StackADT<T> {
 
     /** Estructura utilizada para almacenar los elementos */
-    private Deque<T> data;
+    Deque<T> data;
 
     /**
      * Construye una pila vacía.

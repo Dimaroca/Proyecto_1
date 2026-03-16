@@ -63,5 +63,29 @@ public enum Opcode {
 
     OP_IF,
     OP_ELSE,
-    OP_ENDIF
+    OP_ENDIF,
+
+    OP_SWAP,
+    OP_OVER,
+
+    OP_NOT,
+    OP_BOOLAND,
+    OP_BOOLOR,
+
+    OP_ADD,
+    OP_SUB,
+    OP_NUMEQUALVERIFY,
+    OP_LESSTHAN,
+    OP_GREATERTHAN,
+    OP_LESSTHANOREQUAL,
+    OP_GREATERTHANOREQUAL,
+    
+    OP_NOTIF,
+    OP_VERIFY,
+    OP_RETURN,
+
+    OP_SHA256,
+    OP_HASH256,
+
+    OP_CHECKSIGVERIFY
 }
