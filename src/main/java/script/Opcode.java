@@ -59,5 +59,9 @@ public enum Opcode {
      * Verifica la firma digital (simulada) usando
      * la clave pública correspondiente
      */
-    OP_CHECKSIG
+    OP_CHECKSIG,
+
+    OP_IF,
+    OP_ELSE,
+    OP_ENDIF
 }

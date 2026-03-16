@@ -21,6 +21,7 @@ public class Interpreter implements ScriptEngine {
 
     private StackADT<byte[]> stack;
     private boolean trace;
+    private StackADT<Boolean> stackDeEjecucion;
 
     /**
      * Construye un interpreter sin trace
@@ -38,6 +39,7 @@ public class Interpreter implements ScriptEngine {
     public Interpreter(boolean trace) {
         this.stack = new ArrayStack<>();
         this.trace = trace;
+        this.stackDeEjecucion = new ArrayStack<>();
     }
 
     /**
@@ -54,13 +56,20 @@ public class Interpreter implements ScriptEngine {
     public boolean execute(List<Instruction> script) {
 
         stack = new ArrayStack<>();
-
+        stackDeEjecucion = new ArrayStack<>();
+        
         try {
             for (Instruction instruction : script) {
                 executeInstruction(instruction);
 
                 if (trace) {
-                    System.out.println("Ejecutando: " + instruction.getOpCode() + " | Pila: " + pilaATexto());
+                    String op;
+                    if (instruction.getType() == Instruction.Type.OPCODE) {
+                        op = instruction.getOpCode().toString();
+                    } else {
+                        op = "DATA";
+                    }
+                    System.out.println("Ejecutando: " + op + " | Pila: " + pilaATexto());
                 }
             }
 
@@ -87,7 +96,12 @@ public class Interpreter implements ScriptEngine {
             stack.push(instruction.getData());
             return;
         }
-
+        if (!seEstaEjecutando()) {
+            Opcode op = instruction.getOpCode();
+            if (op != Opcode.OP_IF && op != Opcode.OP_ELSE && op != Opcode.OP_ENDIF) {
+                return;
+            }
+        }
         Opcode op = instruction.getOpCode();
 
         switch (op) {
@@ -132,6 +146,18 @@ public class Interpreter implements ScriptEngine {
 
             case OP_CHECKSIG:
                 executeCheckSig();
+                break;
+            
+            case OP_IF:
+                executeIf();
+                break;
+
+            case OP_ELSE:
+                executeElse();
+                break;
+
+            case OP_ENDIF:
+                executeEndIf();
                 break;
 
             default:
@@ -228,6 +254,33 @@ public class Interpreter implements ScriptEngine {
         boolean valid = CryptoUtils.checkSig(signature, pubKey);
         stack.push(booleanToBytes(valid));
     }
+    private void executeIf()
+    {
+        if(stack.isEmpty())
+        {
+            throw new ScriptException("Pila vacía en OP_IF");
+        }
+        byte[] condicion = stack.pop();
+        boolean resultado = !isZero(condicion);
+        stackDeEjecucion.push(resultado);
+    }
+    private void executeElse()
+    {
+        if(stackDeEjecucion.isEmpty())
+        {
+            throw new ScriptException("OP_ELSE sin OP_IF");
+        }
+        boolean current = stackDeEjecucion.pop();
+        stackDeEjecucion.push(!current);
+    }
+    private void executeEndIf()
+    {
+        if(stackDeEjecucion.isEmpty())
+        {
+            throw new ScriptException("OP_ENDIF sin OP_IF");
+        }
+        stackDeEjecucion.pop();
+    }
     /**
     * Determina si un arreglo de bytes representa el valor falso.
     *
@@ -289,5 +342,23 @@ public class Interpreter implements ScriptEngine {
         }
         sb.append("]");
         return sb.toString();
+    }
+    private boolean seEstaEjecutando() {
+        if (stackDeEjecucion.isEmpty()) {
+            return true;
+        }
+        StackADT<Boolean> temp = new ArrayStack<>();
+        boolean ejecutando = true;
+        while (!stackDeEjecucion.isEmpty()) {
+            boolean b = stackDeEjecucion.pop();
+            temp.push(b);
+            if (!b) {
+                ejecutando = false;
+            }
+        }
+        while (!temp.isEmpty()) {
+            stackDeEjecucion.push(temp.pop());
+        }
+        return ejecutando;
     }
 }
