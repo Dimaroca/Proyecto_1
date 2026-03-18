@@ -71,3 +71,29 @@ public class Main {
         System.out.println("Resultado del script: " + resultFalse);
     }
 }
+/*
+main para adaptar las multiples pruebas con distintos scripts
+
+public static void main(String[] args) throws IOException {
+
+    txtManager reader = new txtManager();
+    ScriptEngine interpreter = new Interpreter(true);
+
+    //archivo con los scripts de prueba
+    String filePath = "scripts.txt";
+
+    List<String> scripts = reader.readScripts(filePath);
+
+    for (String line : scripts) {
+
+        System.out.println("\n------------------------------");
+        System.out.println("Script: " + line);
+
+        List<Instruction> script = reader.parseScript(line);
+
+        boolean result = interpreter.execute(script);
+
+        System.out.println("Resultado: " + result);
+    }
+}
+ */
